@@ -12,15 +12,19 @@ app.post('/chat', async (req, res) => {
     const userMessage = req.body.message;
 
     try {
-        const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-            model: 'openrouter/openai/gpt-3.5-turbo', // Modelo válido
-            messages: [{ role: 'user', content: userMessage }]
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+        const response = await axios.post(
+            'https://openrouter.ai/api/v1/chat/completions',
+            {
+                model: 'openrouter/openai/gpt-3.5-turbo',
+                messages: [{ role: 'user', content: userMessage }]
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+                }
             }
-        });
+        );
 
         const aiReply = response.data.choices[0].message.content;
         res.json({ reply: aiReply });
@@ -35,7 +39,6 @@ app.listen(port, () => {
     console.log(`Servidor activo en puerto ${port}`);
 });
 
-});
 
 app.listen(port, () => {
     console.log(`Servidor activo en puerto ${port}`);
