@@ -13,28 +13,28 @@ app.post('/chat', async (req, res) => {
 
   try {
     const response = await axios.post(
-      'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3',
+      'https://openrouter.ai/api/v1/chat/completions',
       {
-        inputs: userMessage,
-        parameters: {
-          max_new_tokens: 100,
-          return_full_text: false
-        }
+        model: process.env.MODEL_ID,
+        messages: [
+          { role: 'system', content: 'You are a helpful AI assistant.' },
+          { role: 'user', content: userMessage }
+        ]
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.HF_API_KEY}`,
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json'
         }
       }
     );
 
-    const aiResponse = response.data[0]?.generated_text || 'Sin respuesta de la IA';
-    res.json({ reply: aiResponse });
+    const reply = response.data.choices[0]?.message?.content || 'Sin respuesta';
+    res.json({ reply });
 
   } catch (error) {
-    console.error('Error al contactar con la IA:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Error al comunicarse con Hugging Face' });
+    console.error('Error con OpenRouter:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Error al contactar con OpenRouter' });
   }
 });
 
